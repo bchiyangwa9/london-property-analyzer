@@ -1,0 +1,11 @@
+address,property_type,bedrooms,bathrooms,price,square_feet,borough,features,listing_date,agent_name,agent_phone,energy_rating,council_tax_band
+123 Baker Street, London NW1 6XE,Flat,2,1,750000,850,Westminster,"Garden, Parking",2023-10-15,Foxtons,020 7000 1234,C,D
+456 Kings Road, London SW3 4LY,House,3,2,1200000,1400,Kensington and Chelsea,"Garden, Parking, Terrace",2023-10-14,Savills,020 7000 5678,B,E
+789 Camden High Street, London NW1 7JN,Studio,0,1,450000,400,Camden,Gym,2023-10-13,Rightmove Premier,020 7000 9012,D,C
+321 Shoreditch High Street, London E1 6JE,Maisonette,2,1,680000,900,Tower Hamlets,"Garden, Security",2023-10-12,Knight Frank,020 7000 3456,C,D
+654 Clapham Common, London SW4 7AA,Penthouse,4,3,2500000,2200,Lambeth,"Garden, Parking, Terrace, Concierge, Gym, Pool",2023-10-11,Chestertons,020 7000 7890,A,G
+987 Notting Hill Gate, London W11 3JQ,Flat,1,1,520000,600,Kensington and Chelsea,"Balcony, Security",2023-10-10,Winkworth,020 7000 2345,C,C
+147 Canary Wharf, London E14 5AB,Flat,2,2,890000,1000,Tower Hamlets,"Concierge, Gym, Security",2023-10-09,Hamptons,020 7000 6789,B,D
+258 Richmond Park, London SW15 3NR,House,4,3,1650000,2000,Wandsworth,"Garden, Parking",2023-10-08,Marsh & Parsons,020 7000 0123,B,F
+369 Angel Islington, London N1 9LD,Flat,1,1,485000,550,Islington,Garden,2023-10-07,Foxtons,020 7000 1234,D,C
+741 Hackney Central, London E8 1DU,House,3,2,780000,1200,Hackney,"Garden, Parking",2023-10-06,Savills,020 7000 5678,C,E
