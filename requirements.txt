@@ -1,11 +1,39 @@
+# London Property Analyzer - Enhanced Dual Mode System
+# Core Streamlit and web framework
 streamlit>=1.28.0
-pandas>=2.0.0
+streamlit-folium>=0.15.0
+
+# Data processing and analysis
+pandas>=1.5.0
 numpy>=1.24.0
+
+# Visualization and plotting
 plotly>=5.15.0
 folium>=0.14.0
-streamlit-folium>=0.13.0
+
+# Web scraping and HTTP requests
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# Utilities and typing
+geopy>=2.3.0
+pillow>=9.5.0
+
+# Date and time handling (built-in, but explicit for clarity)
+# datetime - built-in module
+
+# Additional utilities for enhanced functionality
+lxml>=4.9.0
+html5lib>=1.1
+urllib3>=1.26.0
+
+# Optional: For enhanced scraping capabilities
+selenium>=4.11.0
+fake-useragent>=1.3.0
+
+# Optional: For advanced data export
 openpyxl>=3.1.0
 xlsxwriter>=3.1.0
-requests>=2.31.0
-python-dateutil>=2.8.2
-pytz>=2023.3
+
+# Optional: For enhanced geolocation
+googlemaps>=4.10.0
