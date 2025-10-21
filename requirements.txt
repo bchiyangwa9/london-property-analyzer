@@ -12,12 +12,12 @@ plotly>=5.15.0
 folium>=0.14.0
 
 # Web scraping and HTTP requests
-requests>=2.31.0
+requests>=2.32.4
 beautifulsoup4>=4.12.0
 
 # Utilities and typing
 geopy>=2.3.0
-pillow>=9.5.0
+pillow>=10.3.0
 
 # Date and time handling (built-in, but explicit for clarity)
 # datetime - built-in module
@@ -25,10 +25,10 @@ pillow>=9.5.0
 # Additional utilities for enhanced functionality
 lxml>=4.9.0
 html5lib>=1.1
-urllib3>=1.26.0
+urllib3>=2.5.0
 
 # Optional: For enhanced scraping capabilities
-selenium>=4.11.0
+selenium>=4.15.1
 fake-useragent>=1.3.0
 
 # Optional: For advanced data export
@@ -37,3 +37,5 @@ xlsxwriter>=3.1.0
 
 # Optional: For enhanced geolocation
 googlemaps>=4.10.0
+h11>=0.16.0 # not directly required, pinned by Snyk to avoid a vulnerability
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
