@@ -243,7 +243,7 @@ class MockOfstedAPI:
             'BR6': [
                 {'name': 'Orpington Primary School', 'type': 'Primary', 'rating': 'Good', 'distance': 0.4},
                 {'name': 'Newstead Wood School', 'type': 'Secondary', 'rating': 'Outstanding', 'distance': 0.6},
-                {'name': 'St Olave's Grammar School', 'type': 'Secondary', 'rating': 'Outstanding', 'distance': 2.1},
+                {'name': "St Olave's Grammar School", 'type': 'Secondary', 'rating': 'Outstanding', 'distance': 2.1},
             ],
             'BR7': [
                 {'name': 'Elmstead Primary School', 'type': 'Primary', 'rating': 'Good', 'distance': 0.5},
@@ -251,7 +251,7 @@ class MockOfstedAPI:
             ],
             'SE18': [
                 {'name': 'Woolwich Polytechnic School', 'type': 'Secondary', 'rating': 'Good', 'distance': 0.7},
-                {'name': 'St Peter's Catholic Primary School', 'type': 'Primary', 'rating': 'Outstanding', 'distance': 0.9},
+                {'name': "St Peter's Catholic Primary School", 'type': 'Primary', 'rating': 'Outstanding', 'distance': 0.9},
             ],
             'DA14': [
                 {'name': 'Sidcup Community Primary School', 'type': 'Primary', 'rating': 'Good', 'distance': 0.4},
@@ -402,7 +402,7 @@ class MockGrammarSchoolAPI:
                 'location': 'Orpington',
                 'entry_requirements': '11+ exam'
             },
-            'St Olave's Grammar School': {
+            "St Olave's Grammar School": {
                 'catchment_postcodes': ['BR6', 'SE9', 'BR7', 'DA16'],
                 'type': 'Boys',
                 'location': 'Orpington',
