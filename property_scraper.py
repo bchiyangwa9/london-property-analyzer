@@ -362,12 +362,36 @@ class PropertyScraper:
                            property_type: str = None) -> Dict[str, str]:
         """Generate search URLs for different property sites"""
 
-        # Clean postcode
+        # Clean postcode for URL usage
         postcode_clean = postcode.replace(' ', '+')
+        
+        # Convert postcode to area name for OnTheMarket (basic mapping)
+        # This is a simplified approach - a real implementation would use a postcode lookup service
+        postcode_to_area = {
+            'SE9': 'sidcup',
+            'SE1': 'london-bridge', 
+            'SW1': 'westminster',
+            'N1': 'islington',
+            'E1': 'whitechapel',
+            'W1': 'oxford-street',
+            'EC1': 'clerkenwell',
+            'WC1': 'bloomsbury',
+            'NW1': 'regents-park',
+            'SE10': 'greenwich',
+            'SE3': 'blackheath',
+            'BR1': 'bromley',
+            'DA14': 'sidcup',
+            'DA15': 'sidcup'
+        }
+        
+        # Extract the basic postcode area (e.g., SE9 from SE9 0AA)
+        basic_postcode = postcode.split()[0] if ' ' in postcode else postcode[:3]
+        area_name = postcode_to_area.get(basic_postcode, postcode_clean.lower())
 
         urls = {}
 
-        # Rightmove search URL
+        # Rightmove search URL - Use OUTCODE format which is more reliable
+        # This approach uses outcode (first part of postcode) which is more widely supported
         rightmove_params = []
         if min_price:
             rightmove_params.append(f"minPrice={min_price}")
@@ -378,12 +402,14 @@ class PropertyScraper:
         if property_type and property_type != "Any":
             type_map = {"House": "houses", "Flat": "flats", "Bungalow": "bungalows"}
             rightmove_params.append(f"propertyTypes={type_map.get(property_type, 'houses')}")
-
+        
+        # Use locationIdentifier with OUTCODE format for better compatibility
         rightmove_params.append(f"radius={radius}")
-        rightmove_url = f"https://www.rightmove.co.uk/property-for-sale/find.html?searchType=SALE&locationIdentifier=POSTCODE%5E{postcode_clean}&{'&'.join(rightmove_params)}"
+        outcode = basic_postcode.upper()
+        rightmove_url = f"https://www.rightmove.co.uk/property-for-sale/find.html?searchType=SALE&locationIdentifier=OUTCODE%5E{outcode}&{'&'.join(rightmove_params)}"
         urls['Rightmove'] = rightmove_url
 
-        # Zoopla search URL
+        # Zoopla search URL (working correctly)
         zoopla_params = []
         if min_price:
             zoopla_params.append(f"price_min={min_price}")
@@ -395,7 +421,7 @@ class PropertyScraper:
         zoopla_url = f"https://www.zoopla.co.uk/for-sale/property/{postcode_clean}/?{'&'.join(zoopla_params)}"
         urls['Zoopla'] = zoopla_url
 
-        # OnTheMarket search URL
+        # OnTheMarket search URL - Use area name instead of postcode
         otm_params = []
         if min_price:
             otm_params.append(f"min-price={min_price}")
@@ -404,61 +430,11 @@ class PropertyScraper:
         if min_bedrooms:
             otm_params.append(f"min-bedrooms={min_bedrooms}")
 
-        otm_url = f"https://www.onthemarket.com/for-sale/property/{postcode_clean}/?{'&'.join(otm_params)}"
+        # Use area name derived from postcode
+        otm_url = f"https://www.onthemarket.com/for-sale/property/{area_name}/?{'&'.join(otm_params)}"
         urls['OnTheMarket'] = otm_url
 
         return urls
-
-    def attempt_search_scraping(self, search_url: str, site: str, limit: int = 20) -> List[Dict[str, any]]:
-        """Attempt to scrape search results from property sites (experimental)"""
-        response = self.safe_request(search_url, delay=(3, 7))
-        if not response:
-            return []
-
-        try:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            properties = []
-
-            if site.lower() == 'rightmove':
-                results = soup.select('.propertyCard-wrapper, .property-result-wrap')[:limit]
-                for result in results:
-                    prop_link = result.select_one('a[href*="/property-for-sale/"]')
-                    if prop_link:
-                        prop_url = urljoin(search_url, prop_link['href'])
-                        price_elem = result.select_one('.propertyCard-priceValue, .price')
-                        price_text = price_elem.get_text(strip=True) if price_elem else ""
-
-                        properties.append({
-                            'url': prop_url,
-                            'price_text': price_text,
-                            'title': result.select_one('.propertyCard-title, .title').get_text(strip=True) if result.select_one('.propertyCard-title, .title') else "",
-                            'source': 'Rightmove'
-                        })
-
-            elif site.lower() == 'zoopla':
-                results = soup.select('.listing-result, .property-card')[:limit]
-                for result in results:
-                    prop_link = result.select_one('a[href*="/for-sale/"]')
-                    if prop_link:
-                        prop_url = urljoin(search_url, prop_link['href'])
-                        price_elem = result.select_one('.price, .listing-price')
-                        price_text = price_elem.get_text(strip=True) if price_elem else ""
-
-                        properties.append({
-                            'url': prop_url,
-                            'price_text': price_text,
-                            'title': result.select_one('.listing-title, .property-title').get_text(strip=True) if result.select_one('.listing-title, .property-title') else "",
-                            'source': 'Zoopla'
-                        })
-
-            print(f"Found {len(properties)} properties on {site}")
-            return properties
-
-        except Exception as e:
-            print(f"Search scraping failed for {site}: {str(e)}")
-            return []
-
-# Test function
 def test_scraper():
     """Test the scraper with sample URLs"""
     scraper = PropertyScraper()
