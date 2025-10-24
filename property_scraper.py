@@ -1,5 +1,30 @@
-
 """
+Property Scraper Module for London Property Analyzer - ENHANCED VERSION
+=====================================================================
+
+ENHANCEMENTS in this version:
+- Comprehensive London postcode mapping (198 postcodes total)
+- All major London areas: SE1-SE28, N1-N22, E1-E20, NW1-NW11, SW1-SW20, 
+  W1-W14, BR1-BR8, DA1-DA18, EN1-EN11, HA0-HA9, IG1-IG11, RM1-RM20, EC1-EC4, WC1-WC2
+- Enhanced Rightmove fallback logic with area name search
+- Improved OnTheMarket area mapping with multiple fallback options
+- Special handling for problem areas like Enfield (EN2, N9, N13, N14, N18, N21)
+- Better URL formatting for multi-word area names
+
+Version: 2.0 Enhanced
+Date: 2025-10-23
+Changes:
+- Fixed Enfield postcode recognition (EN2, N9, etc.)
+- Added 183 new postcode mappings
+- Implemented fallback URL generation for better reliability
+- Enhanced OnTheMarket area name formatting
+
+Original functionality maintained for:
+- Rightmove, Zoopla, OnTheMarket scraping
+- Property data extraction
+- Error handling and rate limiting
+"""
+
 Property Scraper Module for London Property Analyzer
 Supports scraping from Rightmove, Zoopla, OnTheMarket, and other estate agent websites
 """
@@ -360,38 +385,112 @@ class PropertyScraper:
     def generate_search_urls(self, postcode: str, radius: int = 5, min_price: int = None, 
                            max_price: int = None, min_bedrooms: int = None, 
                            property_type: str = None) -> Dict[str, str]:
-        """Generate search URLs for different property sites"""
+        """Generate search URLs for different property sites with comprehensive London postcode mapping"""
 
         # Clean postcode for URL usage
         postcode_clean = postcode.replace(' ', '+')
-        
-        # Convert postcode to area name for OnTheMarket (basic mapping)
-        # This is a simplified approach - a real implementation would use a postcode lookup service
+
+        # Comprehensive London postcode to area mapping
         postcode_to_area = {
-            'SE9': 'sidcup',
-            'SE1': 'london-bridge', 
-            'SW1': 'westminster',
-            'N1': 'islington',
-            'E1': 'whitechapel',
-            'W1': 'oxford-street',
-            'EC1': 'clerkenwell',
-            'WC1': 'bloomsbury',
-            'NW1': 'regents-park',
-            'SE10': 'greenwich',
-            'SE3': 'blackheath',
-            'BR1': 'bromley',
-            'DA14': 'sidcup',
-            'DA15': 'sidcup'
+            # SE postcodes (SE1-SE28)
+            'SE1': 'london-bridge', 'SE2': 'abbey-wood', 'SE3': 'blackheath', 'SE4': 'brockley',
+            'SE5': 'camberwell', 'SE6': 'catford', 'SE7': 'charlton', 'SE8': 'deptford',
+            'SE9': 'sidcup', 'SE10': 'greenwich', 'SE11': 'kennington', 'SE12': 'lee',
+            'SE13': 'lewisham', 'SE14': 'new-cross', 'SE15': 'peckham', 'SE16': 'rotherhithe',
+            'SE17': 'walworth', 'SE18': 'woolwich', 'SE19': 'crystal-palace', 'SE20': 'anerley',
+            'SE21': 'dulwich', 'SE22': 'east-dulwich', 'SE23': 'forest-hill', 'SE24': 'herne-hill',
+            'SE25': 'south-norwood', 'SE26': 'sydenham', 'SE27': 'west-norwood', 'SE28': 'thamesmead',
+
+            # N postcodes (N1-N22) including Enfield areas
+            'N1': 'islington', 'N2': 'east-finchley', 'N3': 'finchley', 'N4': 'finsbury-park',
+            'N5': 'highbury', 'N6': 'highgate', 'N7': 'holloway', 'N8': 'hornsey',
+            'N9': 'enfield', 'N10': 'muswell-hill', 'N11': 'new-southgate', 'N12': 'north-finchley',
+            'N13': 'palmers-green', 'N14': 'southgate', 'N15': 'seven-sisters', 'N16': 'stoke-newington',
+            'N17': 'tottenham', 'N18': 'upper-edmonton', 'N19': 'archway', 'N20': 'whetstone',
+            'N21': 'winchmore-hill', 'N22': 'wood-green',
+
+            # E postcodes (E1-E20)
+            'E1': 'whitechapel', 'E2': 'bethnal-green', 'E3': 'bow', 'E4': 'chingford',
+            'E5': 'clapton', 'E6': 'east-ham', 'E7': 'forest-gate', 'E8': 'hackney',
+            'E9': 'hackney', 'E10': 'leyton', 'E11': 'leytonstone', 'E12': 'manor-park',
+            'E13': 'plaistow', 'E14': 'canary-wharf', 'E15': 'stratford', 'E16': 'canning-town',
+            'E17': 'walthamstow', 'E18': 'south-woodford', 'E20': 'olympic-park',
+
+            # NW postcodes (NW1-NW11)
+            'NW1': 'regents-park', 'NW2': 'cricklewood', 'NW3': 'hampstead', 'NW4': 'hendon',
+            'NW5': 'kentish-town', 'NW6': 'west-hampstead', 'NW7': 'mill-hill', 'NW8': 'st-johns-wood',
+            'NW9': 'kingsbury', 'NW10': 'harlesden', 'NW11': 'golders-green',
+
+            # SW postcodes (SW1-SW20)
+            'SW1': 'westminster', 'SW2': 'brixton', 'SW3': 'chelsea', 'SW4': 'clapham',
+            'SW5': 'earls-court', 'SW6': 'fulham', 'SW7': 'south-kensington', 'SW8': 'south-lambeth',
+            'SW9': 'stockwell', 'SW10': 'west-brompton', 'SW11': 'battersea', 'SW12': 'balham',
+            'SW13': 'barnes', 'SW14': 'mortlake', 'SW15': 'putney', 'SW16': 'streatham',
+            'SW17': 'tooting', 'SW18': 'wandsworth', 'SW19': 'wimbledon', 'SW20': 'raynes-park',
+
+            # W postcodes (W1-W14)
+            'W1': 'oxford-street', 'W2': 'bayswater', 'W3': 'acton', 'W4': 'chiswick',
+            'W5': 'ealing', 'W6': 'hammersmith', 'W7': 'hanwell', 'W8': 'kensington',
+            'W9': 'maida-vale', 'W10': 'ladbroke-grove', 'W11': 'notting-hill', 'W12': 'shepherds-bush',
+            'W13': 'west-ealing', 'W14': 'west-kensington',
+
+            # BR postcodes (Bromley area: BR1-BR8)
+            'BR1': 'bromley', 'BR2': 'hayes', 'BR3': 'beckenham', 'BR4': 'west-wickham',
+            'BR5': 'orpington', 'BR6': 'orpington', 'BR7': 'chislehurst', 'BR8': 'swanley',
+
+            # DA postcodes (Dartford/Bexley: DA1-DA18)
+            'DA1': 'dartford', 'DA2': 'dartford', 'DA3': 'longfield', 'DA4': 'farningham',
+            'DA5': 'bexley', 'DA6': 'bexleyheath', 'DA7': 'bexleyheath', 'DA8': 'erith',
+            'DA9': 'greenhithe', 'DA10': 'swanscombe', 'DA11': 'northfleet', 'DA12': 'gravesend',
+            'DA13': 'gravesend', 'DA14': 'sidcup', 'DA15': 'sidcup', 'DA16': 'welling',
+            'DA17': 'belvedere', 'DA18': 'erith',
+
+            # EN postcodes (Enfield: EN1-EN11)
+            'EN1': 'enfield', 'EN2': 'enfield', 'EN3': 'enfield', 'EN4': 'cockfosters',
+            'EN5': 'barnet', 'EN6': 'potters-bar', 'EN7': 'cheshunt', 'EN8': 'waltham-cross',
+            'EN9': 'waltham-abbey', 'EN10': 'broxbourne', 'EN11': 'hoddesdon',
+
+            # HA postcodes (Harrow: HA0-HA9)
+            'HA0': 'wembley', 'HA1': 'harrow', 'HA2': 'harrow', 'HA3': 'harrow-weald',
+            'HA4': 'ruislip', 'HA5': 'pinner', 'HA6': 'northwood', 'HA7': 'stanmore',
+            'HA8': 'edgware', 'HA9': 'wembley',
+
+            # IG postcodes (Ilford: IG1-IG11)
+            'IG1': 'ilford', 'IG2': 'gants-hill', 'IG3': 'seven-kings', 'IG4': 'redbridge',
+            'IG5': 'clayhall', 'IG6': 'barkingside', 'IG7': 'chigwell', 'IG8': 'woodford-green',
+            'IG9': 'buckhurst-hill', 'IG10': 'loughton', 'IG11': 'barking',
+
+            # RM postcodes (Romford: RM1-RM20)
+            'RM1': 'romford', 'RM2': 'gidea-park', 'RM3': 'harold-wood', 'RM4': 'harold-hill',
+            'RM5': 'collier-row', 'RM6': 'chadwell-heath', 'RM7': 'rush-green', 'RM8': 'dagenham',
+            'RM9': 'dagenham', 'RM10': 'dagenham', 'RM11': 'hornchurch', 'RM12': 'hornchurch',
+            'RM13': 'rainham', 'RM14': 'upminster', 'RM15': 'south-ockendon', 'RM16': 'purfleet',
+            'RM17': 'grays', 'RM18': 'tilbury', 'RM19': 'purfleet', 'RM20': 'chafford-hundred',
+
+            # Central postcodes (EC1-EC4, WC1-WC2)
+            'EC1': 'clerkenwell', 'EC2': 'bank', 'EC3': 'tower-hill', 'EC4': 'fleet-street',
+            'WC1': 'bloomsbury', 'WC2': 'covent-garden'
         }
-        
+
+        # Area name to postcode mapping for fallback searches
+        area_to_postcode = {
+            'enfield': ['EN1', 'EN2', 'EN3', 'N9', 'N13', 'N14', 'N18', 'N21'],
+            'sidcup': ['SE9', 'DA14', 'DA15'],
+            'orpington': ['BR5', 'BR6'],
+            'bromley': ['BR1', 'BR2', 'BR3', 'BR7']
+        }
+
         # Extract the basic postcode area (e.g., SE9 from SE9 0AA)
         basic_postcode = postcode.split()[0] if ' ' in postcode else postcode[:3]
-        area_name = postcode_to_area.get(basic_postcode, postcode_clean.lower())
+        if len(basic_postcode) > 4:  # Handle cases like SE90AA
+            basic_postcode = re.match(r'^([A-Z]{1,2}\d+)', basic_postcode.upper()).group(1) if re.match(r'^[A-Z]{1,2}\d+', basic_postcode.upper()) else basic_postcode[:3]
+
+        basic_postcode = basic_postcode.upper()
+        area_name = postcode_to_area.get(basic_postcode, basic_postcode.lower())
 
         urls = {}
 
-        # Rightmove search URL - Use OUTCODE format which is more reliable
-        # This approach uses outcode (first part of postcode) which is more widely supported
+        # Rightmove search URL with fallback logic
         rightmove_params = []
         if min_price:
             rightmove_params.append(f"minPrice={min_price}")
@@ -402,14 +501,24 @@ class PropertyScraper:
         if property_type and property_type != "Any":
             type_map = {"House": "houses", "Flat": "flats", "Bungalow": "bungalows"}
             rightmove_params.append(f"propertyTypes={type_map.get(property_type, 'houses')}")
-        
-        # Use locationIdentifier with OUTCODE format for better compatibility
+
         rightmove_params.append(f"radius={radius}")
+
+        # Primary approach: Use OUTCODE format
         outcode = basic_postcode.upper()
         rightmove_url = f"https://www.rightmove.co.uk/property-for-sale/find.html?searchType=SALE&locationIdentifier=OUTCODE%5E{outcode}&{'&'.join(rightmove_params)}"
+
+        # Fallback approach: Use area name search if available
+        if basic_postcode in postcode_to_area:
+            area_search_params = rightmove_params.copy()
+            # Remove radius for area name search as it's location-specific
+            area_search_params = [p for p in area_search_params if not p.startswith('radius=')]
+            rightmove_fallback_url = f"https://www.rightmove.co.uk/property-for-sale/find.html?searchType=SALE&searchLocation={area_name}&{'&'.join(area_search_params)}"
+            urls['Rightmove_Fallback'] = rightmove_fallback_url
+
         urls['Rightmove'] = rightmove_url
 
-        # Zoopla search URL (working correctly)
+        # Zoopla search URL (keeping existing functionality)
         zoopla_params = []
         if min_price:
             zoopla_params.append(f"price_min={min_price}")
@@ -417,11 +526,13 @@ class PropertyScraper:
             zoopla_params.append(f"price_max={max_price}")
         if min_bedrooms:
             zoopla_params.append(f"beds_min={min_bedrooms}")
+        if property_type and property_type != "Any":
+            zoopla_params.append(f"property_type={property_type.lower()}")
 
-        zoopla_url = f"https://www.zoopla.co.uk/for-sale/property/{postcode_clean}/?{'&'.join(zoopla_params)}"
+        zoopla_url = f"https://www.zoopla.co.uk/for-sale/property/{postcode_clean}/?{'&'.join(zoopla_params)}&radius={radius}"
         urls['Zoopla'] = zoopla_url
 
-        # OnTheMarket search URL - Use area name instead of postcode
+        # OnTheMarket search URL with comprehensive area mapping and fallbacks
         otm_params = []
         if min_price:
             otm_params.append(f"min-price={min_price}")
@@ -429,10 +540,44 @@ class PropertyScraper:
             otm_params.append(f"max-price={max_price}")
         if min_bedrooms:
             otm_params.append(f"min-bedrooms={min_bedrooms}")
+        if property_type and property_type != "Any":
+            # OnTheMarket uses different property type parameters
+            otm_type_map = {"House": "houses", "Flat": "flats-apartments", "Bungalow": "bungalows"}
+            otm_params.append(f"property-type={otm_type_map.get(property_type, 'houses')}")
 
-        # Use area name derived from postcode
-        otm_url = f"https://www.onthemarket.com/for-sale/property/{area_name}/?{'&'.join(otm_params)}"
+        # Enhanced OnTheMarket area name handling
+        def format_area_for_otm(area_name):
+            """Format area name for OnTheMarket URLs"""
+            # Handle multi-word area names
+            formatted = area_name.lower().replace(' ', '-').replace('_', '-')
+            # Handle special cases
+            special_cases = {
+                'new-malden': 'new-malden',
+                'kingston-upon-thames': 'kingston-upon-thames',
+                'richmond-upon-thames': 'richmond-upon-thames',
+                'stoke-on-trent': 'stoke-on-trent'
+            }
+            return special_cases.get(formatted, formatted)
+
+        # Use comprehensive area mapping with fallback
+        if basic_postcode in postcode_to_area:
+            formatted_area = format_area_for_otm(area_name)
+            otm_url = f"https://www.onthemarket.com/for-sale/property/{formatted_area}/?{'&'.join(otm_params)}"
+        else:
+            # Fallback: use lowercase postcode
+            fallback_area = basic_postcode.lower()
+            otm_url = f"https://www.onthemarket.com/for-sale/property/{fallback_area}/?{'&'.join(otm_params)}"
+            # Also add an alternative URL using full postcode
+            otm_postcode_url = f"https://www.onthemarket.com/for-sale/property/{postcode_clean.lower()}/?{'&'.join(otm_params)}"
+            urls['OnTheMarket_Postcode'] = otm_postcode_url
+
         urls['OnTheMarket'] = otm_url
+
+        # Additional fallback URLs for problematic areas
+        if basic_postcode in ['EN1', 'EN2', 'EN3', 'N9', 'N13', 'N14', 'N18', 'N21']:
+            # Special handling for Enfield area
+            enfield_url = f"https://www.onthemarket.com/for-sale/property/enfield/?{'&'.join(otm_params)}"
+            urls['OnTheMarket_Enfield'] = enfield_url
 
         return urls
 def test_scraper():
