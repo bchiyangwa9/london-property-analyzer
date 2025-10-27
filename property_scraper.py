@@ -24,7 +24,7 @@ Changes:
 - Added scraping support for each new platform
 - Improved error handling and rate limiting
 """
-
+from property_scraper import PropertyScraper
 import requests
 from bs4 import BeautifulSoup
 import re
