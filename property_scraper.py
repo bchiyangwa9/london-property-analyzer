@@ -235,6 +235,191 @@ class PropertyScraper:
         except Exception as e:
             return self.empty_property_dict(url, f"Parsing error: {str(e)}")
 
+    def scrape_primelocation_property(self, url: str) -> Dict[str, any]:
+        """Scrape PrimeLocation property page"""
+        try:
+            response = self.safe_request(url)
+            if not response:
+                return self.empty_property_dict(url, "Failed to fetch page")
+
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extract basic property information
+            title = self.extract_text_safe(soup.find('h1', class_='property-title'))
+            price = self.extract_price(soup.find('div', class_='price'))
+            description = self.extract_text_safe(soup.find('div', class_='property-description'))
+            bedrooms = self.extract_bedrooms(soup.find('span', class_='bedrooms'))
+
+            # Extract location information  
+            address = self.extract_text_safe(soup.find('span', class_='address'))
+            postcode = self.extract_postcode_from_address(address) if address else ""
+
+            return {
+                "url": url,
+                "title": title,
+                "price": price,
+                "bedrooms": bedrooms,
+                "description": description,
+                "address": address,
+                "postcode": postcode,
+                "images": [],
+                "estate_agent": "PrimeLocation",
+                "property_type": "",
+                "listing_date": "",
+                "status": "success"
+            }
+
+        except Exception as e:
+            return self.empty_property_dict(url, f"PrimeLocation scraping error: {str(e)}")
+
+    def scrape_nestoria_property(self, url: str) -> Dict[str, any]:
+        """Scrape Nestoria property page"""
+        try:
+            response = self.safe_request(url)
+            if not response:
+                return self.empty_property_dict(url, "Failed to fetch page")
+
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extract basic property information
+            title = self.extract_text_safe(soup.find('h1', class_='listing-title'))
+            price = self.extract_price(soup.find('span', class_='listing-price'))
+            description = self.extract_text_safe(soup.find('div', class_='listing-description'))
+            bedrooms = self.extract_bedrooms(soup.find('span', class_='bedrooms'))
+
+            # Extract location information  
+            address = self.extract_text_safe(soup.find('div', class_='listing-address'))
+            postcode = self.extract_postcode_from_address(address) if address else ""
+
+            return {
+                "url": url,
+                "title": title,
+                "price": price,
+                "bedrooms": bedrooms,
+                "description": description,
+                "address": address,
+                "postcode": postcode,
+                "images": [],
+                "estate_agent": "Nestoria",
+                "property_type": "",
+                "listing_date": "",
+                "status": "success"
+            }
+
+        except Exception as e:
+            return self.empty_property_dict(url, f"Nestoria scraping error: {str(e)}")
+
+    def scrape_propertyfinder_property(self, url: str) -> Dict[str, any]:
+        """Scrape PropertyFinder property page"""
+        try:
+            response = self.safe_request(url)
+            if not response:
+                return self.empty_property_dict(url, "Failed to fetch page")
+
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extract basic property information
+            title = self.extract_text_safe(soup.find('h1', class_='property-header'))
+            price = self.extract_price(soup.find('div', class_='property-price'))
+            description = self.extract_text_safe(soup.find('section', class_='description'))
+            bedrooms = self.extract_bedrooms(soup.find('span', class_='bed-count'))
+
+            # Extract location information  
+            address = self.extract_text_safe(soup.find('address', class_='property-address'))
+            postcode = self.extract_postcode_from_address(address) if address else ""
+
+            return {
+                "url": url,
+                "title": title,
+                "price": price,
+                "bedrooms": bedrooms,
+                "description": description,
+                "address": address,
+                "postcode": postcode,
+                "images": [],
+                "estate_agent": "PropertyFinder",
+                "property_type": "",
+                "listing_date": "",
+                "status": "success"
+            }
+
+        except Exception as e:
+            return self.empty_property_dict(url, f"PropertyFinder scraping error: {str(e)}")
+
+    def scrape_gumtree_property(self, url: str) -> Dict[str, any]:
+        """Scrape Gumtree property page - COMPETITIVE EDGE: Private sellers"""
+        try:
+            response = self.safe_request(url)
+            if not response:
+                return self.empty_property_dict(url, "Failed to fetch page")
+
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extract basic property information
+            title = self.extract_text_safe(soup.find('h1', class_='ad-title'))
+            price = self.extract_price(soup.find('span', class_='ad-price'))
+            description = self.extract_text_safe(soup.find('div', class_='ad-description'))
+            bedrooms = self.extract_bedrooms(soup.find('span', text='Bedrooms'))
+
+            # Extract location information  
+            address = self.extract_text_safe(soup.find('span', class_='ad-location'))
+            postcode = self.extract_postcode_from_address(address) if address else ""
+
+            return {
+                "url": url,
+                "title": title,
+                "price": price,
+                "bedrooms": bedrooms,
+                "description": description,
+                "address": address,
+                "postcode": postcode,
+                "images": [],
+                "estate_agent": "Gumtree (Private)",
+                "property_type": "",
+                "listing_date": "",
+                "status": "success"
+            }
+
+        except Exception as e:
+            return self.empty_property_dict(url, f"Gumtree scraping error: {str(e)}")
+
+    def scrape_placebuzz_property(self, url: str) -> Dict[str, any]:
+        """Scrape PlaceBuzz property page - COMPETITIVE EDGE: Local agents"""
+        try:
+            response = self.safe_request(url)
+            if not response:
+                return self.empty_property_dict(url, "Failed to fetch page")
+
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extract basic property information
+            title = self.extract_text_safe(soup.find('h1', class_='property-title'))
+            price = self.extract_price(soup.find('div', class_='property-price'))
+            description = self.extract_text_safe(soup.find('div', class_='property-description'))
+            bedrooms = self.extract_bedrooms(soup.find('span', class_='bedrooms'))
+
+            # Extract location information  
+            address = self.extract_text_safe(soup.find('div', class_='property-location'))
+            postcode = self.extract_postcode_from_address(address) if address else ""
+
+            return {
+                "url": url,
+                "title": title,
+                "price": price,
+                "bedrooms": bedrooms,
+                "description": description,
+                "address": address,
+                "postcode": postcode,
+                "images": [],
+                "estate_agent": "PlaceBuzz (Local)",
+                "property_type": "",
+                "listing_date": "",
+                "status": "success"
+            }
+
+        except Exception as e:
+            return self.empty_property_dict(url, f"PlaceBuzz scraping error: {str(e)}")
+
     def extract_postcode_from_address(self, address: str) -> Optional[str]:
         """Extract UK postcode from address string"""
         try:
@@ -302,28 +487,42 @@ class PropertyScraper:
 
     def detect_property_site(self, url: str) -> str:
         """Detect which property site the URL belongs to"""
+        
         url_lower = url.lower()
-        if 'rightmove' in url_lower:
-            return 'rightmove'
-        elif 'zoopla' in url_lower:
+        if 'zoopla' in url_lower:
             return 'zoopla'
-        elif 'onthemarket' in url_lower:
-            return 'onthemarket'
+        elif 'primelocation' in url_lower:
+            return 'primelocation'
+        elif 'nestoria' in url_lower:
+            return 'nestoria'
+        elif 'propertyfinder' in url_lower:
+            return 'propertyfinder'
+        elif 'gumtree' in url_lower:
+            return 'gumtree'
+        elif 'placebuzz' in url_lower:
+            return 'placebuzz'
         else:
-            return 'generic'
+            return 'generic' 
 
     def scrape_single_property(self, url: str) -> Dict[str, any]:
         """Scrape a single property URL - auto-detects site"""
+        
         site = self.detect_property_site(url)
 
-        if site == 'rightmove':
-            return self.scrape_rightmove_property(url)
-        elif site == 'zoopla':
+        if site == 'zoopla':
             return self.scrape_zoopla_property(url)
-        elif site == 'onthemarket':
-            return self.scrape_onthemarket_property(url)
+        elif site == 'primelocation':
+            return self.scrape_primelocation_property(url)
+        elif site == 'nestoria':
+            return self.scrape_nestoria_property(url)
+        elif site == 'propertyfinder':
+            return self.scrape_propertyfinder_property(url)
+        elif site == 'gumtree':
+            return self.scrape_gumtree_property(url)
+        elif site == 'placebuzz':
+            return self.scrape_placebuzz_property(url)
         else:
-            return self.empty_property_dict(url, "Unsupported website")
+            return self.empty_property_dict(url, "Unsupported website") 
 
     def scrape_multiple_properties(self, urls: List[str], max_workers: int = 3) -> List[Dict[str, any]]:
         """Scrape multiple properties in parallel with rate limiting"""
@@ -362,54 +561,52 @@ class PropertyScraper:
                            property_type: str = None) -> Dict[str, str]:
         """Generate search URLs for different property sites"""
 
+        
         # Clean postcode for URL usage
         postcode_clean = postcode.replace(' ', '+')
-        
-        # Convert postcode to area name for OnTheMarket (basic mapping)
-        # This is a simplified approach - a real implementation would use a postcode lookup service
+
+        # Enhanced postcode to area name mapping for better URL generation
         postcode_to_area = {
+            # South East London
             'SE9': 'sidcup',
             'SE1': 'london-bridge', 
-            'SW1': 'westminster',
-            'N1': 'islington',
-            'E1': 'whitechapel',
-            'W1': 'oxford-street',
-            'EC1': 'clerkenwell',
-            'WC1': 'bloomsbury',
-            'NW1': 'regents-park',
             'SE10': 'greenwich',
             'SE3': 'blackheath',
+            # South West London
+            'SW1': 'westminster',
+            # North London
+            'N1': 'islington',
+            'NW1': 'regents-park',
+            'EN2': 'enfield',  # Added for EN2
+            # East London
+            'E1': 'whitechapel',
+            # West London
+            'W1': 'oxford-street',
+            # Central London
+            'EC1': 'clerkenwell',
+            'WC1': 'bloomsbury',
+            # Bromley and surrounding areas
             'BR1': 'bromley',
+            'BR6': 'orpington',  # Added for BR6
+            # South East outer areas
             'DA14': 'sidcup',
-            'DA15': 'sidcup'
+            'DA15': 'sidcup',
+            # Additional common postcodes
+            'CR0': 'croydon',
+            'TW1': 'twickenham',
+            'KT1': 'kingston',
+            'SM1': 'sutton',
+            'HA1': 'harrow',
+            'UB1': 'southall'
         }
-        
+
         # Extract the basic postcode area (e.g., SE9 from SE9 0AA)
         basic_postcode = postcode.split()[0] if ' ' in postcode else postcode[:3]
         area_name = postcode_to_area.get(basic_postcode, postcode_clean.lower())
 
         urls = {}
 
-        # Rightmove search URL - Use OUTCODE format which is more reliable
-        # This approach uses outcode (first part of postcode) which is more widely supported
-        rightmove_params = []
-        if min_price:
-            rightmove_params.append(f"minPrice={min_price}")
-        if max_price:
-            rightmove_params.append(f"maxPrice={max_price}")
-        if min_bedrooms:
-            rightmove_params.append(f"minBedrooms={min_bedrooms}")
-        if property_type and property_type != "Any":
-            type_map = {"House": "houses", "Flat": "flats", "Bungalow": "bungalows"}
-            rightmove_params.append(f"propertyTypes={type_map.get(property_type, 'houses')}")
-        
-        # Use locationIdentifier with OUTCODE format for better compatibility
-        rightmove_params.append(f"radius={radius}")
-        outcode = basic_postcode.upper()
-        rightmove_url = f"https://www.rightmove.co.uk/property-for-sale/find.html?searchType=SALE&locationIdentifier=OUTCODE%5E{outcode}&{'&'.join(rightmove_params)}"
-        urls['Rightmove'] = rightmove_url
-
-        # Zoopla search URL (working correctly)
+        # 1. ZOOPLA (Keep working implementation)
         zoopla_params = []
         if min_price:
             zoopla_params.append(f"price_min={min_price}")
@@ -421,18 +618,65 @@ class PropertyScraper:
         zoopla_url = f"https://www.zoopla.co.uk/for-sale/property/{postcode_clean}/?{'&'.join(zoopla_params)}"
         urls['Zoopla'] = zoopla_url
 
-        # OnTheMarket search URL - Use area name instead of postcode
-        otm_params = []
+        # 2. PRIMELOCATION (Premium listings, less restrictive)
+        prime_params = []
         if min_price:
-            otm_params.append(f"min-price={min_price}")
+            prime_params.append(f"minPrice={min_price}")
         if max_price:
-            otm_params.append(f"max-price={max_price}")
+            prime_params.append(f"maxPrice={max_price}")
         if min_bedrooms:
-            otm_params.append(f"min-bedrooms={min_bedrooms}")
+            prime_params.append(f"numberOfBedrooms={min_bedrooms}")
 
-        # Use area name derived from postcode
-        otm_url = f"https://www.onthemarket.com/for-sale/property/{area_name}/?{'&'.join(otm_params)}"
-        urls['OnTheMarket'] = otm_url
+        prime_url = f"https://www.primelocation.com/for-sale/{area_name}/?{'&'.join(prime_params)}"
+        urls['PrimeLocation'] = prime_url
+
+        # 3. NESTORIA (Property aggregator, scraping-friendly)
+        nestoria_params = []
+        if min_price:
+            nestoria_params.append(f"price_min={min_price}")
+        if max_price:
+            nestoria_params.append(f"price_max={max_price}")
+        if min_bedrooms:
+            nestoria_params.append(f"bedrooms_min={min_bedrooms}")
+
+        nestoria_url = f"https://www.nestoria.co.uk/find/for_sale-{area_name}?{'&'.join(nestoria_params)}"
+        urls['Nestoria'] = nestoria_url
+
+        # 4. PROPERTYFINDER (UK coverage, simple URLs)
+        finder_params = []
+        if min_price:
+            finder_params.append(f"min_price={min_price}")
+        if max_price:
+            finder_params.append(f"max_price={max_price}")
+        if min_bedrooms:
+            finder_params.append(f"min_beds={min_bedrooms}")
+
+        finder_url = f"https://www.propertyfinder.co.uk/search?location={area_name}&{'&'.join(finder_params)}"
+        urls['PropertyFinder'] = finder_url
+
+        # 5. GUMTREE (COMPETITIVE EDGE: Private sellers, unique listings)
+        gumtree_params = []
+        if min_price:
+            gumtree_params.append(f"min_price={min_price}")
+        if max_price:
+            gumtree_params.append(f"max_price={max_price}")
+        if min_bedrooms:
+            gumtree_params.append(f"min_bedrooms={min_bedrooms}")
+
+        gumtree_url = f"https://www.gumtree.com/search?search_category=property-for-sale&search_location={area_name}&{'&'.join(gumtree_params)}"
+        urls['Gumtree'] = gumtree_url
+
+        # 6. PLACEBUZZ (COMPETITIVE EDGE: Local agents, off-market properties)
+        buzz_params = []
+        if min_price:
+            buzz_params.append(f"minPrice={min_price}")
+        if max_price:
+            buzz_params.append(f"maxPrice={max_price}")
+        if min_bedrooms:
+            buzz_params.append(f"bedrooms={min_bedrooms}")
+
+        buzz_url = f"https://www.placebuzz.com/for-sale/{area_name}?{'&'.join(buzz_params)}"
+        urls['PlaceBuzz'] = buzz_url
 
         return urls
 
